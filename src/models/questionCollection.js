@@ -50,7 +50,35 @@ const questionCollectionSchema = new mongoose.Schema({
             trim: true,
         },
     ],
+    isPublic : {
+        type: Boolean,
+        required: true,
+        default: false,
+    },
+    sharedWith : [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            required: false,
+            ref: "User",
+        },
+    ],
+    language : {
+        type: String,
+        enum : ["en", "es"],
+        required: false,
+        trim: true,
+    },
 });
+
+//Maintain order of fields in the JSON response
+questionCollectionSchema.set("toJSON", {
+    virtuals: true,
+    versionKey: false,
+    transform: function (doc, ret) {
+        delete ret._id;
+    },
+});
+
 
 const QuestionCollection = mongoose.model("QuestionCollection", questionCollectionSchema);
 
