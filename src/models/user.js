@@ -59,6 +59,19 @@ userSchema.methods.toJSON = function () {
     return userObject;
 };
 
+//Have the user create questions
+userSchema.virtual("questions", {
+    ref: "Question",
+    localField: "_id",
+    foreignField: "owner",
+});
+
+//Have the user create question collections
+userSchema.virtual("questionCollections", {
+    ref: "QuestionCollection",
+    localField: "_id",
+    foreignField: "createdBy",
+});
 
 
 const User = mongoose.model("User", userSchema);
