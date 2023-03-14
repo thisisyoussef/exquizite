@@ -11,13 +11,6 @@ const questionCollectionSchema = new mongoose.Schema({
         required: false,
         trim: true,
     },
-    questions: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            required: false,
-            ref: "Question",
-        },
-    ],
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
@@ -77,6 +70,13 @@ questionCollectionSchema.set("toJSON", {
     transform: function (doc, ret) {
         delete ret._id;
     },
+});
+
+//populate questions
+questionCollectionSchema.virtual("question", {
+    ref: "Question",
+    localField: "_id",
+    foreignField: "questionCollection",
 });
 
 

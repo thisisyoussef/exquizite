@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../task-manager"
+		},
+		{
+			"path": "../quizzler"
+		}
+	],
+	"settings": {}
+}

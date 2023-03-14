@@ -68,6 +68,11 @@ const questionSchema = new mongoose.Schema({
         required: true,
         default: Date.now,
     },
+    questionCollection: {   
+        type: mongoose.Schema.Types.ObjectId,
+        required: false,
+        ref: "QuestionCollection",
+    },
 });
 
 const Question = mongoose.model("Question", questionSchema);
