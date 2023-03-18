@@ -3,3 +3,5 @@
 
 # Ignore all files with .env extension
 *.env
+
+/node_modules
