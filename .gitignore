@@ -1,0 +1,7 @@
+# Ignore config folder
+/config
+
+# Ignore all files with .env extension
+*.env
+
+/node_modules
