@@ -32,5 +32,5 @@
         "passport-local": "^1.0.0",
         "validator": "^13.9.0"
     },
-    "engines": {"node": "19.1.0"}
+    "engines": {"node": "19.1.0", "npm": "8.19.3"}
 }
