@@ -11,15 +11,23 @@ function generateMCQPrompt(prompt, numQuestions) {
   if (numQuestions === undefined) {
     numQuestions = defaultNumberOfQuestions;
   }
-  //  Generate ${numQuestions} multiple choice questions about the prompt in the following format as a JSON Object:
   return `
   Prompt: ${prompt}
-  Generate a multiple choice question about the prompt in the following format as a JSON Object:
+  Generate ${numQuestions} multiple choice questions about the prompt in the following format as a JSON Object:
   
   {
+    "questions": [
+      {
         "question": "Question",
         "options": ["A", "B", "C", "D"],
         "answer": "Answer"
+      },
+      {
+        "question": "Question",
+        "options": ["A", "B", "C", "D"],
+        "answer": "Answer"
+      }
+    ]
   }`;
 }
 
@@ -27,6 +35,7 @@ function generateMCQPrompt(prompt, numQuestions) {
 async function TextCompletion(prompt, numQuestions) {
   try{
   const promptText = generateMCQPrompt(prompt, numQuestions);
+  console.log("MCQ Prompt");
   const response = await openai.createCompletion({
     model: "text-davinci-003",
     prompt: promptText,
@@ -40,7 +49,26 @@ async function TextCompletion(prompt, numQuestions) {
     // stream: false,
     // stop: ["\n"],
   });
-    return response.data.choices[0].text;
+  console.log("MCQ Response");
+  console.log(response.data.choices[0].text);
+  return response.data.choices[0].text;
+}catch(e){
+  console.log(e);
+}
+}
+
+//MCQ Completion, testing with chat
+async function TextCompletionChat(prompt, numQuestions) {
+  try{
+  const promptText = generateMCQPrompt(prompt, numQuestions);
+  console.log("MCQ Prompt with Chat");
+  const response = await openai.createChatCompletion({
+    model: "gpt-4",
+    messages:[{role:"user", content:promptText,}]
+  });
+  console.log("MCQ Response");
+  console.log(response.data.choices);
+  return response.data.choices[0].content;
 }catch(e){
   console.log(e);
 }

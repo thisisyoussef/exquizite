@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const questionCollectionSchema = new mongoose.Schema({
+const assessmentSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -35,6 +35,7 @@ const questionCollectionSchema = new mongoose.Schema({
         type: String,
         required: false,
         trim: true,
+        enum: ["easy", "medium", "hard"],
     },
     tags : [
         {
@@ -45,8 +46,8 @@ const questionCollectionSchema = new mongoose.Schema({
     ],
     isPublic : {
         type: Boolean,
-        required: true,
-        default: false,
+        required: false,
+        default: true,
     },
     sharedWith : [
         {
@@ -58,28 +59,19 @@ const questionCollectionSchema = new mongoose.Schema({
     language : {
         type: String,
         enum : ["en", "es"],
-        required: false,
-        trim: true,
+        required: true,
+        default: "en",
     },
+    questions : [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+            ref: "Question",
+        },
+    ],
 });
 
-//Maintain order of fields in the JSON response
-questionCollectionSchema.set("toJSON", {
-    virtuals: true,
-    versionKey: false,
-    transform: function (doc, ret) {
-        delete ret._id;
-    },
-});
+const Assessment = mongoose.model("Assessment", assessmentSchema);
 
-//populate questions
-questionCollectionSchema.virtual("questions", {
-    ref: "Question",
-    localField: "_id",
-    foreignField: "questionCollection",
-});
+module.exports = Assessment;
 
-
-const QuestionCollection = mongoose.model("QuestionCollection", questionCollectionSchema);
-
-module.exports = QuestionCollection;

@@ -59,11 +59,11 @@ router.get("/questionCollections", auth, async (req, res) => {
     }
 });
 
-//Get a question collection by ID if it is public or shared with the user or the user is the owner
+//Get a question collection by ID if it is public or shared with the user or the user is the owner. There is no need to populate the questions field because the client will make a separate request to get the questions
 router.get("/questionCollection/:id", auth, async (req, res) => {
     try {
         //Get the question collection by ID
-        const questionCollection = await QuestionCollection.findById(req.params.id);
+        const questionCollection = await QuestionCollection.findById(req.params.id).populate("questions");
         //Check if the question collection is public or shared with the user or the user is the owner
         if (!questionCollection.isPublic && !questionCollection.sharedWith.includes(req.user._id) && questionCollection.createdBy.toString() !== req.user._id.toString()) {
             return res.status(401).json({ error: "You are not authorized to view this question collection" });
