@@ -14,7 +14,6 @@ function generateMCQPrompt(prompt, numQuestions) {
   return `
   Prompt: ${prompt}
   Generate ${numQuestions} multiple choice questions about the prompt in the following format as a JSON Object:
-  
   {
     "questions": [
       {
@@ -28,14 +27,20 @@ function generateMCQPrompt(prompt, numQuestions) {
         "answer": "Answer"
       }
     ]
-  }`;
+  }
+
+  Make sure that there is a stem in the question and plausible distractors. 
+  Make sure that the distractors are plausible and not too similar to the answer. 
+  Make sure that the answer is clear and unambiguous.
+  Make sure that the question can be answered by reading the prompt and thinking about it.
+  `
+  ;
 }
 
 //MCQ Completion
 async function TextCompletion(prompt, numQuestions) {
   try{
   const promptText = generateMCQPrompt(prompt, numQuestions);
-  console.log("MCQ Prompt");
   const response = await openai.createCompletion({
     model: "text-davinci-003",
     prompt: promptText,
@@ -49,7 +54,6 @@ async function TextCompletion(prompt, numQuestions) {
     // stream: false,
     // stop: ["\n"],
   });
-  console.log("MCQ Response");
   console.log(response.data.choices[0].text);
   return response.data.choices[0].text;
 }catch(e){
@@ -67,8 +71,8 @@ async function TextCompletionChat(prompt, numQuestions) {
     messages:[{role:"user", content:promptText,}]
   });
   console.log("MCQ Response");
-  console.log(response.data.choices);
-  return response.data.choices[0].content;
+  console.log(response.data.choices[0].message.content);
+  return response.data.choices[0].message.content;
 }catch(e){
   console.log(e);
 }
@@ -90,7 +94,7 @@ function parseResponse(cleanedResponse) {
 }
 //Generate MCQ
 async function generateMCQ(prompt, numQuestions) {
-  const response = await TextCompletion(prompt, numQuestions);
+  const response = await TextCompletionChat(prompt, numQuestions);
   const cleanedResponse = cleanResponse(response);
   const parsedResponse = parseResponse(cleanedResponse);
   return parsedResponse;
