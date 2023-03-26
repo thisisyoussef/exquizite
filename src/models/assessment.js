@@ -69,6 +69,18 @@ const assessmentSchema = new mongoose.Schema({
             ref: "Question",
         },
     ],
+    attempts : [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            required: false,
+            ref: "Attempt",
+        },
+    ],
+    maxAttempts : {
+        type: Number,
+        required: false,
+        default: 1,
+    },
 });
 
 const Assessment = mongoose.model("Assessment", assessmentSchema);
