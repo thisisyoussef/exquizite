@@ -89,4 +89,37 @@ router.patch("/attempts/submit/:attemptId", auth, jsonParser, async (req, res) =
     }
 });
 
+//Get all attempts for a user
+router.get("/attempts", auth, async (req, res) => {
+    try {
+        //Find all attempts for the user
+        const attempts = await Attempt.find({createdBy: req.user._id});
+        //If the user has no attempts, send error
+        if (!attempts) {
+            return res.status(404).send();
+        }
+        //Return the attempts
+        res.send(attempts);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+//Get all attempts for an assessment
+router.get("/attempts/:assessmentId", auth, async (req, res) => {
+    try {
+        //Find all attempts for the assessment
+        const attempts = await Attempt.find({assessment: req.params.assessmentId});
+        //If the assessment has no attempts, send error
+        if (!attempts) {
+            return res.status(404).send();
+        }
+        //Return the attempts
+        res.send(attempts);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+
 module.exports = router;

@@ -20,4 +20,9 @@ app.listen(port, () => {
 });
 const main = async() => {};
 
+//run mongoose
+require("./db/mongoose");
+
+
+
 main();

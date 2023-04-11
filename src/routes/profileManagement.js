@@ -20,7 +20,7 @@ router.post("/register" , jsonParser, async(req, res) => {
     } catch (error) {
         // If there was an error, send it back to the client
         console.log(error);
-        res.status(400).json({ error });
+        res.status(400).json({ error: error.message });
     }
 });
 
@@ -51,7 +51,7 @@ router.post("/login", jsonParser, async (req, res) => {
         res.status(200).json({ user,token });
     } catch (error) {
         // 6. Send an error message to the client
-        res.status(400).json({ error });
+        res.status(400).json({ error: error.message });
     }
 });
 /* Example of a request body:
