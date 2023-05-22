@@ -4,6 +4,8 @@ const router = express.Router();
 var bodyParser = require("body-parser");
 var jsonParser = bodyParser.json();
 const auth = require("../middleware/auth");
+const sendGrid = require("@sendgrid/mail");
+sendGrid.setApiKey(process.env.SENDGRID_API_KEY);
 //       // "dev": "env-cmd -f ./config/dev.env nodemon src/app.js",
 
 // Registration
@@ -148,6 +150,130 @@ router.delete("/profile", auth, async (req, res) => {
         res.status(500).json({ error });
     }
 });
+
+//Forgot password
+router.post("/forgotPassword", jsonParser, async (req, res) => {
+    console.log("Forgot password")
+    try {
+        console.log("Forgot password")
+        // Get email from request body
+        const email = req.body.email;
+        console.log(email);
+        // Find user by email
+        const user = await User.findOne({ email });
+            // If user doesn't exist, return error
+            if (!user) {
+                console.log("User not found")
+                return res.status(404).json({ error: "User not found" });
+            }
+            console.log("User found")
+            await sendResetEmail(user);
+            console.log("Email sent")
+            // Return success message
+            res.status(200).json({ message: "Password reset email sent" });
+
+    } catch (error) {
+        console.log("Error")
+        // Return error message
+        res.status(500).json({ error });
+    }
+});
+
+//Check reset code
+router.post("/checkResetCode", jsonParser, async (req, res) => {
+    try {
+        // Get email and reset code from request body
+        const { email, resetCode } = req.body;
+        // Find user by email
+        const user = await User.findOne({ email });
+        // If user doesn't exist, return error
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        // If reset code doesn't match, return error
+        if (resetCode !== user.resetCode) {
+            console.log(resetCode);
+            console.log(user.resetCode);
+            return res.status(400).json({ error: "Invalid reset code" });
+        }
+        // If reset code is expired, return error
+        if (Date.now() > user.resetCodeExpiration) {
+            return res.status(400).json({ error: "Reset code expired" });
+        }
+        // Return success message
+        res.status(200).json({ message: "Reset code valid" });
+    } catch (error) {
+        // Return error message
+        res.status(500).json({ error });
+    }
+});
+
+//Reset password
+router.post("/resetPassword", jsonParser, async (req, res) => {
+    try {
+        // Get email, reset code, and new password from request body
+        const { email, resetCode, newPassword } = req.body;
+        // Find user by email
+        const user = await User.findOne({ email });
+        // If user doesn't exist, return error
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        // If reset code doesn't match, return error
+        if (resetCode !== user.resetCode) {
+            return res.status(400).json({ error: "Invalid reset code" });
+        }
+        // If reset code is expired, return error
+        if (Date.now() > user.resetCodeExpiration) {
+            return res.status(400).json({ error: "Reset code expired" });
+        }
+        // Set new password
+        user.password = newPassword;
+        // Clear reset code and expiration
+        user.resetCode = null;
+        user.resetCodeExpiration = null;
+        // Save user
+        await user.save();
+        // Return success message
+        res.status(200).json({ message: "Password reset successful" });
+    } catch (error) {
+        // Return error message
+        res.status(500).json({ error });
+    }
+});
+
+generateResetCode = async function (user) {
+    //Generate a random 6 digit number
+    console.log("Generating Random Number")
+    const resetCode = Math.floor(100000 + Math.random() * 900000);
+    console.log("Generated Random Number")
+    //Set the reset code and expiration on the user
+    user.resetCode = resetCode;
+    console.log("Set Reset Code", user.resetCode)
+    user.resetCodeExpiration = Date.now() + 600000; //expires in 10 minutes
+    console.log("Set expiration date")
+    await user.save();
+    console.log("Saved user")
+    return resetCode;
+};
+
+//Create a sendResetEmail method on the userSchema
+sendResetEmail = async function (user) {
+  console.log("Entered Function")
+  // Generate a reset code and print it
+  const resetCode = await generateResetCode(user);
+  console.log("Generated reset code: ", resetCode);
+
+  // Send the email and print success message
+  await sendGrid.send({
+    to: user.email,
+    from: "youssefiahmedis@gmail.com",
+    subject: "Password Reset",
+    text: `Your password reset code is ${resetCode}`,
+  });
+  console.log("Reset email sent successfully.");
+};
+
 
 
 module.exports = router;

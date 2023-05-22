@@ -8,7 +8,10 @@ const userSchema = new mongoose.Schema({
     lastName: { type: String, required: false },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ["student", "teacher"], default: "student" },
+    role: { type: String, enum: ["student", "teacher"], default: "student" ,
+    //set to lowercase
+    set: (value) => value.toLowerCase(),
+  },
     tokens: [
         {
             token: {
@@ -17,6 +20,9 @@ const userSchema = new mongoose.Schema({
             },
         },
     ],
+    resetCode: { type: String, required: false , default: null, 
+},
+    resetCodeExpiration: { type: Date, required: false, default: null },
 });
 
 //Hash the password before saving the user model
@@ -72,6 +78,7 @@ userSchema.virtual("questionCollections", {
     localField: "_id",
     foreignField: "createdBy",
 });
+
 
 
 const User = mongoose.model("User", userSchema);
