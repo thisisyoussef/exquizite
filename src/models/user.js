@@ -25,6 +25,7 @@ const userSchema = new mongoose.Schema({
     resetCodeExpiration: { type: Date, required: false, default: null },
 });
 
+
 //Hash the password before saving the user model
 userSchema.pre("save", async function (next) {
   const user = this;
@@ -33,6 +34,8 @@ userSchema.pre("save", async function (next) {
   }
   next();
 });
+
+
 
 //Generate an auth token for the user
 userSchema.methods.generateAuthToken = async function () {

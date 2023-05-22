@@ -229,11 +229,13 @@ router.post("/resetPassword", jsonParser, async (req, res) => {
         }
         // Set new password
         user.password = newPassword;
+        
         // Clear reset code and expiration
         user.resetCode = null;
         user.resetCodeExpiration = null;
         // Save user
         await user.save();
+
         // Return success message
         res.status(200).json({ message: "Password reset successful" });
     } catch (error) {
