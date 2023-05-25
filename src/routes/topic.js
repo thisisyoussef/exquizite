@@ -1,5 +1,5 @@
 const express = require("express");
-const QuestionCollection = require("../models/questionCollection");
+const Topic = require("../models/topic");
 const router = express.Router();
 var bodyParser = require("body-parser");
 var jsonParser = bodyParser.json();
@@ -7,17 +7,17 @@ const auth = require("../middleware/auth");
 const User = require("../models/user");
 
 //Create a Question Collection
-router.post("/questionCollection", auth, jsonParser, async (req, res) => 
+router.post("/topic", auth, jsonParser, async (req, res) => 
 {
     // Create a new question collection using the data from the request body,
-    const questionCollection = new QuestionCollection(req.body);
+    const topic = new Topic(req.body);
     try {
         //Add the owner to the question collection
-        questionCollection.createdBy = req.user._id;
+        topic.createdBy = req.user._id;
         // Save the question collection in the database
-        await questionCollection.save();
+        await topic.save();
         // Send the question collection back to the client
-        res.status(201).json({ questionCollection });
+        res.status(201).json({ topic });
     } catch (error) {
         // If there was an error, send it back to the client
         res.status(400).json({ error: error.message });
@@ -34,25 +34,25 @@ router.post("/questionCollection", auth, jsonParser, async (req, res) =>
 */
 
 //Get all question collections, they must be public or shared with the user or the user must be the owner
-router.get("/questionCollections", auth, async (req, res) => {
+router.get("/topics", auth, async (req, res) => {
     try {
         //Get all question collections
-        const questionCollections = await QuestionCollection.find({});
+        const topics = await Topic.find({});
         //Filter out question collections that are not public or shared with the user or owned by the user
-        const filteredQuestionCollections = questionCollections.filter((questionCollection) => {
-            if (questionCollection.isPublic) {
+        const filteredtopics = topics.filter((topic) => {
+            if (topic.isPublic) {
                 return true;
             }
-            if (questionCollection.sharedWith.includes(req.user._id)) {
+            if (topic.sharedWith.includes(req.user._id)) {
                 return true;
             }
-            if (questionCollection.createdBy.toString() === req.user._id.toString()) {
+            if (topic.createdBy.toString() === req.user._id.toString()) {
                 return true;
             }
             return false;
         });
         //Send the question collections back to the client
-        res.status(200).json({ questionCollections: filteredQuestionCollections });
+        res.status(200).json({ topics: filteredtopics });
     } catch (error) {
         // If there was an error, send it back to the client
         res.status(500).json({ error: error.message });
@@ -60,16 +60,16 @@ router.get("/questionCollections", auth, async (req, res) => {
 });
 
 //Get a question collection by ID if it is public or shared with the user or the user is the owner. There is no need to populate the questions field because the client will make a separate request to get the questions
-router.get("/questionCollection/:id", auth, async (req, res) => {
+router.get("/topic/:id", auth, async (req, res) => {
     try {
         //Get the question collection by ID
-        const questionCollection = await QuestionCollection.findById(req.params.id).populate("questions");
+        const topic = await Topic.findById(req.params.id).populate("questions");
         //Check if the question collection is public or shared with the user or the user is the owner
-        if (!questionCollection.isPublic && !questionCollection.sharedWith.includes(req.user._id) && questionCollection.createdBy.toString() !== req.user._id.toString()) {
+        if (!topic.isPublic && !topic.sharedWith.includes(req.user._id) && topic.createdBy.toString() !== req.user._id.toString()) {
             return res.status(401).json({ error: "You are not authorized to view this question collection" });
         }
         //Send the question collection back to the client
-        res.status(200).json({ questionCollection });
+        res.status(200).json({ topic });
     } catch (error) {
         // If there was an error, send it back to the client
         res.status(500).json({ error: error.message });
@@ -77,12 +77,12 @@ router.get("/questionCollection/:id", auth, async (req, res) => {
 });
 
 //Update a question collection by ID, user must be the owner
-router.patch("/questionCollection/:id", auth, jsonParser, async (req, res) => {
+router.patch("/topic/:id", auth, jsonParser, async (req, res) => {
     try {
         //Get the question collection by ID
-        const questionCollection = await QuestionCollection.findById(req.params.id);
+        const topic = await Topic.findById(req.params.id);
         //Check if the user is the owner
-        if (questionCollection.createdBy.toString() !== req.user._id.toString()) {
+        if (topic.createdBy.toString() !== req.user._id.toString()) {
             return res.status(401).json({ error: "You are not authorized to update this question collection" });
         }
         //Elligible updates
@@ -94,11 +94,11 @@ router.patch("/questionCollection/:id", auth, jsonParser, async (req, res) => {
             return res.status(400).json({ error: "Invalid updates!" });
         }
         //Update the question collection
-        updates.forEach((update) => (questionCollection[update] = req.body[update]));
+        updates.forEach((update) => (topic[update] = req.body[update]));
         //Save the question collection
-        await questionCollection.save();
+        await topic.save();
         //Send the question collection back to the client
-        res.status(200).json({ questionCollection });
+        res.status(200).json({ topic });
     } catch (error) {
         // If there was an error, send it back to the client
         res.status(500).json({ error: error.message });
@@ -106,10 +106,10 @@ router.patch("/questionCollection/:id", auth, jsonParser, async (req, res) => {
 });
 
 //Share a question collection by ID, user must be the owner, user must exist in the database, user must not already be shared with, user cannot share with themselves
-router.patch("/questionCollection/share/:id", auth, jsonParser, async (req, res) => {
+router.patch("/topic/share/:id", auth, jsonParser, async (req, res) => {
     try {
         //Get the question collection by ID
-        const questionCollection = await QuestionCollection.findById(req.params.id);
+        const topic = await Topic.findById(req.params.id);
          //Check if the user shared with exists in the database
         if (!await User.exists({ _id: req.body.sharedWith })) {
             return res.status(400).json({ error: "User does not exist" });
@@ -120,20 +120,20 @@ router.patch("/questionCollection/share/:id", auth, jsonParser, async (req, res)
         }
 
         //Check if the user is the owner
-        if (questionCollection.createdBy.toString() !== req.user._id.toString()) {
+        if (topic.createdBy.toString() !== req.user._id.toString()) {
             return res.status(401).json({ error: "You are not authorized to share this question collection" });
         }
         //Check if the user is already shared with
-        if (questionCollection.sharedWith.includes(req.body.sharedWith)) {
+        if (topic.sharedWith.includes(req.body.sharedWith)) {
             return res.status(400).json({ error: "User is already shared with" });
         }
         //Add the user to the sharedWith array
-        questionCollection.sharedWith.push(req.body.sharedWith);
+        topic.sharedWith.push(req.body.sharedWith);
         console.log("User added to sharedWith array");
         //Save the question collection
-        await questionCollection.save();
+        await topic.save();
         //Send the question collection back to the client
-        res.status(200).json({ questionCollection });
+        res.status(200).json({ topic });
     } catch (error) {
         // If there was an error, send it back to the client
         console.log("There was an error");
@@ -149,20 +149,20 @@ router.patch("/questionCollection/share/:id", auth, jsonParser, async (req, res)
 */
 
 //Turn a collection from private to public or vice versa
-router.patch("/questionCollection/public/:id", auth, jsonParser, async (req, res) => {
+router.patch("/topic/public/:id", auth, jsonParser, async (req, res) => {
     try {
         //Get the question collection by ID
-        const questionCollection = await QuestionCollection.findById(req.params.id);
+        const topic = await Topic.findById(req.params.id);
         //Check if the user is the owner
-        if (questionCollection.createdBy.toString() !== req.user._id.toString()) {
+        if (topic.createdBy.toString() !== req.user._id.toString()) {
             return res.status(401).json({ error: "You are not authorized to update this question collection" });
         }
         //Update the question collection
-        questionCollection.isPublic = req.body.isPublic;
+        topic.isPublic = req.body.isPublic;
         //Save the question collection
-        await questionCollection.save();
+        await topic.save();
         //Send the question collection back to the client
-        res.status(200).json({ questionCollection });
+        res.status(200).json({ topic });
     } catch (error) {
         // If there was an error, send it back to the client
         res.status(500).json({ error: error.message });
@@ -172,10 +172,10 @@ router.patch("/questionCollection/public/:id", auth, jsonParser, async (req, res
 
 
 //Unshare a question collection by ID, user must be the owner, user must exist in the database, user must already be shared with, user cannot unshare with themselves
-router.patch("/questionCollection/unshare/:id", auth, jsonParser, async (req, res) => {
+router.patch("/topic/unshare/:id", auth, jsonParser, async (req, res) => {
     try {
         //Get the question collection by ID
-        const questionCollection = await QuestionCollection.findById(req.params.id);
+        const topic = await Topic.findById(req.params.id);
         //Check if the user shared with exists in the database
         if (!await User.exists({ _id: req.body.sharedWith })) {
             return res.status(400).json({ error: "User does not exist" });
@@ -185,20 +185,20 @@ router.patch("/questionCollection/unshare/:id", auth, jsonParser, async (req, re
             return res.status(400).json({ error: "You cannot unshare with yourself" });
         }
         //Check if the user is the owner
-        if (questionCollection.createdBy.toString() !== req.user._id.toString()) {
+        if (topic.createdBy.toString() !== req.user._id.toString()) {
             return res.status(401).json({ error: "You are not authorized to unshare this question collection" });
         }
         //Check if the user is already shared with
-        if (!questionCollection.sharedWith.includes(req.body.sharedWith)) {
+        if (!topic.sharedWith.includes(req.body.sharedWith)) {
             return res.status(400).json({ error: "User is not shared with" });
         }
         //Remove the user from the sharedWith array
-        questionCollection.sharedWith = questionCollection.sharedWith.filter((user) => user.toString() !== req.body.sharedWith.toString());
+        topic.sharedWith = topic.sharedWith.filter((user) => user.toString() !== req.body.sharedWith.toString());
         console.log("User removed from sharedWith array");
         //Save the question collection
-        await questionCollection.save();
+        await topic.save();
         //Send the question collection back to the client
-        res.status(200).json({ questionCollection });
+        res.status(200).json({ topic });
     } catch (error) {
         // If there was an error, send it back to the client
         console.log("There was an error");
@@ -214,16 +214,16 @@ router.patch("/questionCollection/unshare/:id", auth, jsonParser, async (req, re
 */
 
 //Delete a question collection by ID, and all of its questions, user must be the owner
-router.delete("/questionCollection/:id", auth, async (req, res) => {
+router.delete("/topic/:id", auth, async (req, res) => {
     try {
         //Get the question collection by ID
-        const questionCollection = await QuestionCollection.findById(req.params.id);
+        const topic = await Topic.findById(req.params.id);
         //Check if the user is the owner
-        if (questionCollection.createdBy.toString() !== req.user._id.toString()) {
+        if (topic.createdBy.toString() !== req.user._id.toString()) {
             return res.status(401).json({ error: "You are not authorized to delete this question collection" });
         }
         //Delete the question collection
-        await QuestionCollection.deleteOne({ _id: req.params.id });
+        await Topic.deleteOne({ _id: req.params.id });
         //Send a success message back to the client
         res.status(200).json({ message: "Question collection deleted" });
     } catch (error) {
@@ -233,12 +233,12 @@ router.delete("/questionCollection/:id", auth, async (req, res) => {
 });
 
 //Get all question collections created by logged in user
-router.get("/questionCollections/me", auth, async (req, res) => {
+router.get("/topics/me", auth, async (req, res) => {
     try {
         //Get all question collections created by logged in user
-        const questionCollections = await QuestionCollection.find({ createdBy: req.user._id });
+        const topics = await Topic.find({ createdBy: req.user._id });
         //Send the question collections back to the client
-        res.status(200).json({ questionCollections });
+        res.status(200).json({ topics });
     } catch (error) {
         // If there was an error, send it back to the client
         res.status(500).json({ erro:error.message });
@@ -246,12 +246,12 @@ router.get("/questionCollections/me", auth, async (req, res) => {
 });
 
 //Get all question collections created by a specific user that are public or shared with the logged in user
-router.get("/questionCollections/user/:id", auth, async (req, res) => {
+router.get("/topics/user/:id", auth, async (req, res) => {
     try {
         //Get all question collections created by a specific user that are public or shared with the logged in user
-        const questionCollections = await QuestionCollection.find({ createdBy: req.params.id, $or: [{ isPublic: true }, { sharedWith: req.user._id }] });
+        const topics = await Topic.find({ createdBy: req.params.id, $or: [{ isPublic: true }, { sharedWith: req.user._id }] });
         //Send the question collections back to the client
-        res.status(200).json({ questionCollections });
+        res.status(200).json({ topics });
     } catch (error) {
         // If there was an error, send it back to the client
         res.status(500).json({ error });
@@ -260,12 +260,12 @@ router.get("/questionCollections/user/:id", auth, async (req, res) => {
 
 //Search for question collections by name, description, createdBy, sharedWith, difficulty, subject, topic, or tags, must be public or shared with logged in user
 //TODO: WIP
-router.get("/questionCollections/search", auth, jsonParser, async (req, res) => {
+router.get("/topics/search", auth, jsonParser, async (req, res) => {
     try {
         //Get the search query
         const searchQuery = req.body.searchQuery;
         //Get results from the search query
-        const results = await QuestionCollection.find({ $or: [{ name: { $regex: searchQuery.name, $options: "i" } }, { description: { $regex: searchQuery.description, $options: "i" } }, { createdBy: { $regex: searchQuery.createdBy, $options: "i" } }, { sharedWith: { $regex: searchQuery.sharedWith, $options: "i" } }, { difficulty: { $regex: searchQuery.difficulty, $options: "i" } }, { subject: { $regex: searchQuery.subject, $options: "i" } }, { topic: { $regex: searchQuery.topic, $options: "i" } }, { tags: { $regex: searchQuery.tags, $options: "i" } }], $or: [{ isPublic: true }, { sharedWith: req.user._id }] });
+        const results = await Topic.find({ $or: [{ name: { $regex: searchQuery.name, $options: "i" } }, { description: { $regex: searchQuery.description, $options: "i" } }, { createdBy: { $regex: searchQuery.createdBy, $options: "i" } }, { sharedWith: { $regex: searchQuery.sharedWith, $options: "i" } }, { difficulty: { $regex: searchQuery.difficulty, $options: "i" } }, { subject: { $regex: searchQuery.subject, $options: "i" } }, { topic: { $regex: searchQuery.topic, $options: "i" } }, { tags: { $regex: searchQuery.tags, $options: "i" } }], $or: [{ isPublic: true }, { sharedWith: req.user._id }] });
         res.status(200).json({ results });
     } catch (error) {
         // If there was an error, send it back to the client

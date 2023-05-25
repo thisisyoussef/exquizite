@@ -76,8 +76,8 @@ userSchema.virtual("questions", {
 });
 
 //Have the user create question collections
-userSchema.virtual("questionCollections", {
-    ref: "QuestionCollection",
+userSchema.virtual("topics", {
+    ref: "topic",
     localField: "_id",
     foreignField: "createdBy",
 });

@@ -6,10 +6,10 @@ const auth = require("../middleware/auth");
 const User = require("../models/user");
 const Question = require("../models/question");
 const generateMCQ = require("../functions/MCQ");
-const QuestionCollection = require("../models/questionCollection");
+const topic = require("../models/topic");
 
 
-//Create new questions, if a questionCollection id is provided populate the questionCollection field
+//Create new questions, if a topic id is provided populate the topic field
 router.post("/questions", auth, jsonParser, async (req, res) => {
     try {
         //Generate MCQ
@@ -24,7 +24,7 @@ router.post("/questions", auth, jsonParser, async (req, res) => {
             answer: questions[i].answer,
             options: questions[i].options,
             createdBy: req.user._id,
-            questionCollection: req.body.questionCollection,
+            topic: req.body.topic,
             });
             await question.save();
         }      
@@ -36,21 +36,21 @@ router.post("/questions", auth, jsonParser, async (req, res) => {
     }
 });
 
-//Get all questions in a questionCollection by id, make sure the user is the owner of the collection or the collection is public or the user is shared with the collection
+//Get all questions in a topic by id, make sure the user is the owner of the collection or the collection is public or the user is shared with the collection
 router.get("/questions/:id", auth, async (req, res) => {
     try {
-        //Find the questionCollection by id
-        const questionCollection = await QuestionCollection.findById(req.params.id);
-        //If the questionCollection is not found, send error
-        if (!questionCollection) {
+        //Find the topic by id
+        const topic = await topic.findById(req.params.id);
+        //If the topic is not found, send error
+        if (!topic) {
             return res.status(404).send();
         }
         //If the user is the owner of the collection or the collection is public or the user is shared with the collection, return the questions
-        if (questionCollection.createdBy.toString() === req.user._id.toString() || questionCollection.isPublic || questionCollection.sharedWith.includes(req.user._id)) {
+        if (topic.createdBy.toString() === req.user._id.toString() || topic.isPublic || topic.sharedWith.includes(req.user._id)) {
             //Find all questions in the collection
-            await questionCollection.populate("questions");
+            await topic.populate("questions");
             //Return the questions
-            res.send(questionCollection.questions);
+            res.send(topic.questions);
         } else {
             //If the user is not the owner of the collection or the collection is not public or the user is not shared with the collection, send error
             res.status(401).send();
@@ -71,11 +71,11 @@ router.get("/questions/question/:id", auth, async (req, res) => {
             return res.status(404).send();
         }
         //get the question collection the question is in
-        const collectionID = question.questionCollection;
+        const collectionID = question.topic;
         //Find the question collection the question is in
-        const questionCollection = await QuestionCollection.findById(collectionID);
+        const topic = await topic.findById(collectionID);
         //If the user is the owner of the collection or the collection is public or the user is shared with the collection, return the question
-        if (questionCollection.createdBy.toString() === req.user._id.toString() || questionCollection.isPublic || questionCollection.sharedWith.includes(req.user._id)) {
+        if (topic.createdBy.toString() === req.user._id.toString() || topic.isPublic || topic.sharedWith.includes(req.user._id)) {
             //Return the question
             res.send(question);
         } else {
@@ -98,11 +98,11 @@ router.patch("/questions/question/:id", auth, jsonParser, async (req, res) => {
             return res.status(404).send();
         }
         //get the question collection the question is in
-        const collectionID = question.questionCollection;
+        const collectionID = question.topic;
         //Find the question collection the question is in
-        const questionCollection = await QuestionCollection.findById(collectionID);
+        const topic = await topic.findById(collectionID);
         //If the user is the owner of the collection or the collection is public or the user is shared with the collection, update the question
-        if (questionCollection.createdBy.toString() === req.user._id.toString() || questionCollection.isPublic || questionCollection.sharedWith.includes(req.user._id)) {
+        if (topic.createdBy.toString() === req.user._id.toString() || topic.isPublic || topic.sharedWith.includes(req.user._id)) {
             //Update the question
             const updates = Object.keys(req.body);
             const allowedUpdates = ["question", "answer", "options"];
@@ -134,11 +134,11 @@ router.delete("/questions/question/:id", auth, async (req, res) => {
             return res.status(404).send();
         }
         //get the question collection the question is in
-        const collectionID = question.questionCollection;
+        const collectionID = question.topic;
         //Find the question collection the question is in
-        const questionCollection = await QuestionCollection.findById(collectionID);
+        const topic = await topic.findById(collectionID);
         //If the user is the owner of the collection or the collection is public or the user is shared with the collection, delete the question
-        if (questionCollection.createdBy.toString() === req.user._id.toString() || questionCollection.isPublic || questionCollection.sharedWith.includes(req.user._id)) {
+        if (topic.createdBy.toString() === req.user._id.toString() || topic.isPublic || topic.sharedWith.includes(req.user._id)) {
             //Delete the question
             await question.remove();
             //Return the question
@@ -153,19 +153,19 @@ router.delete("/questions/question/:id", auth, async (req, res) => {
     }
 });
 
-//Delete all questions in a questionCollection by id, make sure the user is the owner of the collection or the collection is public or the user is shared with the collection
+//Delete all questions in a topic by id, make sure the user is the owner of the collection or the collection is public or the user is shared with the collection
 router.delete("/questions/:collectionId", auth, async (req, res) => {
     try {
-        //Find the questionCollection by id
-        const questionCollection = await QuestionCollection.findById(req.params.collectionId);
-        //If the questionCollection is not found, send error
-        if (!questionCollection) {
+        //Find the topic by id
+        const topic = await topic.findById(req.params.collectionId);
+        //If the topic is not found, send error
+        if (!topic) {
             return res.status(404).send();
         }
         //If the user is the owner of the collection or the collection is public or the user is shared with the collection, delete all questions in the collection
-        if (questionCollection.createdBy.toString() === req.user._id.toString() || questionCollection.isPublic || questionCollection.sharedWith.includes(req.user._id)) {
-            //Find all questions that are in the collection by looking for all questions with the id in the questionCollection field and delete them
-            const deletedQuestions = await Question.find({ questionCollection: req.params.collectionId });
+        if (topic.createdBy.toString() === req.user._id.toString() || topic.isPublic || topic.sharedWith.includes(req.user._id)) {
+            //Find all questions that are in the collection by looking for all questions with the id in the topic field and delete them
+            const deletedQuestions = await Question.find({ topic: req.params.collectionId });
             deletedQuestions.forEach((question) => question.deleteOne());
             deletedQuestions.forEach((question) => question.save());
             res.send({"message": "All questions deleted"});

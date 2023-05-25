@@ -236,4 +236,18 @@ router.post("/assessments/share/:assessmentId/:userId", auth, jsonParser, async 
     }
 });
 
+//Get all assessments created by the user
+router.get("/myAssessments", auth, async (req, res) => {
+    try {
+        //Find all assessments created by the user
+        const assessments = await Assessment.find({createdBy: req.user._id});
+        //Return the assessments
+        res.send(assessments);
+    } catch (error) {
+        //If error, send error
+        res.status(500).send(error.message);
+    }
+});
+
+
 module.exports = router;

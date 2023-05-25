@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const questionCollectionSchema = new mongoose.Schema({
+const topicSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -26,10 +26,12 @@ const questionCollectionSchema = new mongoose.Schema({
         required: true,
         default: Date.now,
     },
-    category : {
+    subject : {
         type: String,
         required: false,
         trim: true,
+        enum : ["math", "science", "english", "history", "art", "music", "language", "other"],
+        toLowerCase: true,
     },
     difficulty : {
         type: String,
@@ -64,7 +66,7 @@ const questionCollectionSchema = new mongoose.Schema({
 });
 
 //Maintain order of fields in the JSON response
-questionCollectionSchema.set("toJSON", {
+topicSchema.set("toJSON", {
     virtuals: true,
     versionKey: false,
     transform: function (doc, ret) {
@@ -73,13 +75,13 @@ questionCollectionSchema.set("toJSON", {
 });
 
 //populate questions
-questionCollectionSchema.virtual("questions", {
+topicSchema.virtual("questions", {
     ref: "Question",
     localField: "_id",
-    foreignField: "questionCollection",
+    foreignField: "topic",
 });
 
 
-const QuestionCollection = mongoose.model("QuestionCollection", questionCollectionSchema);
+const Topic = mongoose.model("Topic", topicSchema);
 
-module.exports = QuestionCollection;
+module.exports = Topic;

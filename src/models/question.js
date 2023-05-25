@@ -68,10 +68,15 @@ const questionSchema = new mongoose.Schema({
         required: true,
         default: Date.now,
     },
-    questionCollection: {   
+    topic: {   
         type: mongoose.Schema.Types.ObjectId,
         required: false,
-        ref: "QuestionCollection",
+        ref: "topic",
+    },
+    material: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false,
+        ref: "Material",
     },
 });
 
