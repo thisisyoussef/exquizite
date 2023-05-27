@@ -14,7 +14,7 @@ ExQuizite is a quiz application designed to provide an interactive and engaging 
 
 ## Project Overview
 
-ExQuizite is a quiz application designed to make learning fun and interactive. With ExQuizite, users can create quizzes, answer quizzes, and track their progress. The application is built using modern technologies such as Node.js, React, and Redux to provide a seamless and efficient user experience.
+ExQuizite is a quiz application designed to make learning fun and interactive. With ExQuizite, users can create quizzes, answer quizzes, and track their progress. The application is built using Node.js to provide a seamless and efficient user experience.
 
 ## Installation Instructions
 
@@ -66,8 +66,6 @@ Simply visit [http://localhost:3000](http://localhost:3000) to start creating an
 ExQuizite utilizes the following technologies and tools:
 
 - [Node.js](https://nodejs.org/) - A JavaScript runtime built on Chrome's V8 JavaScript engine. It allows for the development of scalable and high-performance applications.
-- [React](https://reactjs.org/) - A JavaScript library for building user interfaces. React enables the creation of reusable UI components to efficiently manage the view layer of the application.
-- [Redux](https://redux.js.org/) - A predictable state container for JavaScript applications. Redux simplifies the management of application state, making it easier to maintain and scale.
 
 These technologies and tools contribute to the success of ExQuizite by providing performance, efficiency, and modularity, ensuring the application is robust and maintainable.
 
