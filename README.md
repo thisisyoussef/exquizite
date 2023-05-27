@@ -1,75 +1,91 @@
 # Exquizite
 
-Exquizite is a versatile and user-friendly quiz app that lets users create custom quizzes and challenge their friends or coworkers with ease. The project is hosted on GitHub and utilizes a modern technology stack for efficient performance and extensibility.
+Exquizite is a user-friendly web application that allows users to create, share, and solve quiz questions. The project is built using modern web technologies and designed to be simple, efficient, and highly performant.
+
+## Table of Contents
+
+1. [Project Overview](#project-overview)
+2. [Installation Instructions](#installation-instructions)
+3. [Usage Guide](#usage-guide)
+4. [Features and Functionality](#features-and-functionality)
+5. [Contributing Guidelines](#contributing-guidelines)
+6. [License Information](#license-information)
+7. [Contact Information](#contact-information)
 
 ## Project Overview
 
-Exquizite is built using advanced web development technologies, including:
+The Exquizite project is designed with end users in mind. We aim to create a seamless quiz creation and sharing experience that remains easy to use and adapt. The project is built using the following technologies and tools:
 
-- Node.js for a powerful and scalable back-end environment.
-- Express.js to create a seamless and lightweight web application framework.
-- MongoDB to store quiz and user data in a highly-scalable and flexible NoSQL database.
+- Node.js: Server-side JavaScript runtime environment.
+- Express.js: Web application framework for Node.js.
+- React.js: User interface library from Facebook.
+- PostgreSQL: Open source relational database management system.
+- Webpack: Module bundler.
+- Babel: JavaScript transpiler.
 
-These technologies together form the foundation of the app and make it a highly performant, secure, and easy-to-use platform for users all around the globe.
+These tools and technologies were chosen for their versatility, ease of use, and general compatibility with modern web development practices. They contribute to Exquizite's functionality, performance, and overall success by ensuring fast, reliable, and secure execution of the application.
 
 ## Installation Instructions
 
-1. Clone the GitHub repository to your local machine using the following command:
+To install and set up Exquizite on your local machine, follow these instructions:
 
-```sh
-git clone https://github.com/thisisyoussef/exquizite.git
-```
+1. Clone the repository:
+   ```
+   git clone https://github.com/thisisyoussef/exquizite.git
+   ```
+2. Navigate to the project directory:
+   ```
+   cd exquizite
+   ```
+3. Install dependencies:
+   ```
+   npm install
+   ```
+4. Create a `.env` file in the project root and include the required environment variables (e.g. Database connection details).
 
-2. Navigate to the project directory and install the required dependencies:
-
-```sh
-cd exquizite
-npm install
-```
-
-3. Create a `.env` file inside the project directory and add the necessary environment variables, such as your MongoDB connection string, JWT secret, etc.
-
-4. Start the server using the following command:
-
-```sh
-npm run start
-```
-
-5. Navigate to `http://localhost:3000` (or the port specified in your `.env` file) to access the Exquizite app.
+5. Start the development server:
+   ```
+   npm run dev
+   ```
+6. The application should now be running at `http://localhost:3000`.
 
 ## Usage Guide
 
-1. Register an account or log in with your existing credentials.
-2. Create a new quiz by clicking the "Create Quiz" button.
-3. Fill in the required fields, such as quiz title, description, and questions.
-4. Share the generated quiz link with your friends or coworkers, and start the competition!
+1. To create a quiz, click on "Create Quiz" from the homepage.
+2. Follow the guided steps to add questions, answers, and optional details.
+3. Once the quiz is complete, a unique sharing link will be generated for you to share with others.
+4. To participate in a quiz, users can simply navigate to the shared link and begin answering questions.
+5. Once all questions have been answered, users will receive their final score and an option to retake the quiz.
 
 ## Features and Functionality
 
-- User authentication and account management.
-- Intuitive quiz creation.
-- Real-time quiz scoring and leaderboards.
-- Highly-customizable quiz content.
-- Shareable quiz links for easy access.
-- Designed for both desktop and mobile browsers.
+- Easy quiz creation with a user-friendly interface.
+- Ability to share quizzes via a unique link.
+- Participant progress tracking and scoring.
+- Multi-choice and open-ended questions supported.
+- Cross-platform compatibility for both desktop and mobile devices.
 
 ## Contributing Guidelines
 
-- Create a fork of the main repository.
-- Clone your fork and create a new branch with a descriptive name, such as `feature/new-feature` or `bugfix/some-bug`.
-- Implement your changes and ensure that they follow the project's coding standards and conventions.
-- Commit your changes and push them to your fork.
-- Create a pull request from your fork's branch to the main repository. Provide a detailed description of your changes and any relevant context.
+We welcome community contributions to Exquizite! To contribute, please follow these steps:
+
+1. Fork the repository on GitHub.
+2. Clone your fork and set up the development environment according to the installation instructions.
+3. Create a new branch with a descriptive name for your feature or bugfix.
+4. Write code and commit your changes. Be sure to include clear, concise commit messages.
+5. Push your changes to your fork on GitHub.
+6. Open a pull request against the original repository for review.
+
+For more details, please refer to the [contributing guide](CONTRIBUTING.md).
 
 ## License Information
 
-Exquizite is an open-source project released under the [MIT License](https://opensource.org/licenses/MIT). You are free to use, modify, and distribute the software as long as you abide by the terms of the license.
+This project is licensed under the [MIT License](LICENSE).
 
 ## Contact Information
 
-For questions or concerns regarding the Exquizite project, please contact the project maintainer, Youssef:
+For any questions or concerns, please feel free to reach out to the project owner:
 
-- GitHub: [thisisyoussef](https://github.com/thisisyoussef)
-- Email: youssef@example.com (replace with actual email)
+[Youssef](mailto:you@example.com)
 
-Please use the GitHub issue tracker for reporting bugs or requesting new features.
+We appreciate your interest in Exquizite! Happy quiz creating!
