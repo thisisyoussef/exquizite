@@ -81,6 +81,13 @@ topicSchema.virtual("questions", {
     foreignField: "topic",
 });
 
+//populate materials
+topicSchema.virtual("materials", {
+    ref: "Material",
+    localField: "_id",
+    foreignField: "topic",
+});
+
 
 const Topic = mongoose.model("Topic", topicSchema);
 

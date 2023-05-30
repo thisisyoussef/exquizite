@@ -22,7 +22,7 @@ const materialSchema = new mongoose.Schema({
     },
     files: [
         {
-            type: mongoose.Schema.Types.ObjectId,
+            type: Buffer,
             required: true,
             ref: "File",
         },
@@ -37,9 +37,23 @@ const materialSchema = new mongoose.Schema({
         required: false,
         trim: true,
     },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "User",
+    },
 }, {
     timestamps: true,
 });
+
+//ToJSON method to remove sensitive information from the material object before sending it to the client.
+materialSchema.methods.toJSON = function () {
+    const material = this;
+    const materialObject = material.toObject();
+    delete materialObject.files;
+
+    return materialObject;
+};
 
 const Material = mongoose.model("Material", materialSchema);
 

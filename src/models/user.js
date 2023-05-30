@@ -82,7 +82,12 @@ userSchema.virtual("topics", {
     foreignField: "createdBy",
 });
 
-
+//Have the user create materials
+userSchema.virtual("materials", {
+    ref: "Material",
+    localField: "_id",
+    foreignField: "owner",
+});
 
 const User = mongoose.model("User", userSchema);
 

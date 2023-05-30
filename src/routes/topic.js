@@ -68,6 +68,8 @@ router.get("/topic/:id", auth, async (req, res) => {
         if (!topic.isPublic && !topic.sharedWith.includes(req.user._id) && topic.createdBy.toString() !== req.user._id.toString()) {
             return res.status(401).json({ error: "You are not authorized to view this question collection" });
         }
+        //populate the materials field
+        await topic.populate("materials");
         //Send the question collection back to the client
         res.status(200).json({ topic });
     } catch (error) {
@@ -95,6 +97,12 @@ router.patch("/topic/:id", auth, jsonParser, async (req, res) => {
         }
         //Update the question collection
         updates.forEach((update) => (topic[update] = req.body[update]));
+        //populate the materials field
+        await topic.populate("materials");
+        //if materials is empty, set it to an empty array
+        if (!topic.materials) {
+            topic.materials = [];
+        }
         //Save the question collection
         await topic.save();
         //Send the question collection back to the client
