@@ -9,6 +9,8 @@ const Question = require("../models/question");
 const Topic = require("../models/topic");
 const Material = require("../models/material");
 const generateMCQ = require("../functions/MCQ");
+const { fork } = require('child_process');
+
 
 //Create a new assessment
 router.post("/assessments", auth, jsonParser, async (req, res) => {
@@ -33,62 +35,74 @@ router.post("/assessments", auth, jsonParser, async (req, res) => {
 //Then calls generateMCQ using the materials text fields
 router.post("/assessments/generateFromTopic/:topicId", auth, jsonParser, async (req, res) => {
     try {
-        console.log(req.params);
-        //Find the topic by id
-        const topic = await Topic.findById(req.params.topicId);
-        //If the topic is not found, send error
-        if (!topic) {
-            return res.status(404).send( "Topic with id " + req.params.topicId + " not found");
+      console.log(req.params);
+      // Find the topic by id
+      const topic = await Topic.findById(req.params.topicId);
+      // If the topic is not found, send error
+      if (!topic) {
+        return res.status(404).send("Topic with id " + req.params.topicId + " not found");
+      }
+      // If the user is the owner of the topic, generate the assessment
+      if (topic.createdBy.toString() === req.user._id.toString()) {
+        // Find all materials in the topic
+        await topic.populate("materials");
+        // Create an array of materials
+        const materials = topic.materials;
+        // If there are no materials, send error
+        if (materials.length === 0) {
+          return res.status(404).send("No materials found in topic");
         }
-        //If the user is the owner of the topic generate the assessment
-        if (topic.createdBy.toString() === req.user._id.toString()) {
-            //Find all materials in the topic
-            await topic.populate("materials");
-            //Create an array of materials
-            const materials = topic.materials;
-            //If there are no materials, send error
-            if (materials.length === 0) {
-                return res.status(404).send("No materials found in topic");
-            }
-            //Create a text variable that will hold the text from each material in one string
-            let text = "";
-            //Add the text from each material to the array of text
-            for (let i = 0; i < materials.length; i++) {
-                text += materials[i].text;
-            }
-            //Generate the assessment
-            const response = await generateMCQ(text, req.body.numQuestions);
-            //Create an array of Questions from the response
-            let questions = [];
-            for (let i = 0; i < response.questions.length; i++) {
-                //Create a new question
-                const question = new Question({
-                    question: response.questions[i].question,
-                    options: response.questions[i].options,
-                    answer: response.questions[i].answer,
-                    createdBy: req.user._id,
-                });
-                //Save the question
-                await question.save();
-                //Add the question to the array of questions
-                questions.push(question);
-            }
-            //Create new assessment
-            const assessment = new Assessment({
-                name: req.body.name,
-                createdBy: req.user._id,
-                questions: questions,
-            });
-            //Save the assessment
-            await assessment.save();
-            //Return the assessment
-            res.status(201).send(assessment);
+        // Create a text variable that will hold the text from each material in one string
+        let text = "";
+        // Add the text from each material to the array of text
+        for (let i = 0; i < materials.length; i++) {
+          text += materials[i].text;
         }
+        // Spawn a new worker process to handle the generateMCQ task
+        const worker = fork('./src/utils/worker.js', [text, req.body.numQuestions]);
+  
+        // Handle messages from the worker process
+        worker.on('message', async (response) => {
+          // Process the response from the worker process as needed
+          // ...
+          //Create an array of Questions from the response
+          let questions = [];
+          for (let i = 0; i < response.questions.length; i++) {
+              //Create a new question
+              const question = new Question({
+                  question: response.questions[i].question,
+                  options: response.questions[i].options,
+                  answer: response.questions[i].answer,
+                  createdBy: req.user._id,
+              });
+              //Save the question
+              await question.save();
+              //Add the question to the array of questions
+              questions.push(question);
+          }
+          // Create new assessment
+          const assessment = new Assessment({
+            name: req.body.name,
+            createdBy: req.user._id,
+            questions: questions,
+          });
+          // Save the assessment
+          await assessment.save();
+          // Return the assessment
+          res.status(201).send(assessment);
+        });
+  
+        // Handle errors from the worker process
+        worker.on('error', (error) => {
+          // Handle the error from the worker process
+          res.status(500).send(error.message);
+        });
+      }
     } catch (error) {
-        //If error, send error
-        res.status(500).send(error.message);
-    }    
-});
+      // If error, send error
+      res.status(500).send(error.message);
+    }
+  });
 
 //Add questions to an assessment
 router.patch("/assessments/addQuestions/:assessmentId", auth, jsonParser, async (req, res) => {

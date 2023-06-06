@@ -95,6 +95,7 @@ async function generateMCQ(prompt, numQuestions) {
   const response = await TextCompletion(prompt, numQuestions);
   const cleanedResponse = cleanResponse(response);
   const parsedResponse = parseResponse(cleanedResponse);
+  process.send(parsedResponse);
   return parsedResponse;
 }
 
