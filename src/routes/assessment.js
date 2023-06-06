@@ -35,7 +35,6 @@ router.post("/assessments", auth, jsonParser, async (req, res) => {
 //Then calls generateMCQ using the materials text fields
 router.post("/assessments/generateFromTopic/:topicId", auth, jsonParser, async (req, res) => {
     try {
-      console.log(req.params);
       // Find the topic by id
       const topic = await Topic.findById(req.params.topicId);
       // If the topic is not found, send error

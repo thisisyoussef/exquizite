@@ -37,7 +37,7 @@ function generateMCQPrompt(prompt, numQuestions) {
 async function TextCompletion(prompt, numQuestions) {
   try{
   const promptText = generateMCQPrompt(prompt, numQuestions);
-  console.log("MCQ Prompt");
+  // console.log("MCQ Prompt");
   const response = await openai.createCompletion({
     model: "text-davinci-003",
     prompt: promptText,
@@ -51,9 +51,9 @@ async function TextCompletion(prompt, numQuestions) {
     // stream: false,
     // stop: ["\n"],
   });
-  console.log("MCQ Response");
-  console.log(response.data.choices[0].text);
-  return response.data.choices[0].text;
+  // console.log("MCQ Response");
+  // console.log(response.data.choices[0].text);
+  // return response.data.choices[0].text;
 }catch(e){
   console.log(e);
 }
