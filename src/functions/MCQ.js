@@ -8,13 +8,15 @@ const defaultNumberOfQuestions = 1;
 
 //MCQ Prompt
 function generateMCQPrompt(prompt, numQuestions) {
+  console.log("MCQ Prompt");
+  console.log(prompt);
   if (numQuestions === undefined) {
     numQuestions = defaultNumberOfQuestions;
   }
   return `
   Prompt: ${prompt}
   Generate ${numQuestions} multiple choice questions about the prompt in the following format as a JSON Object:
-  Example:
+  Example Response:
   {
     "questions": [
       {

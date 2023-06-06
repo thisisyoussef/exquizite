@@ -6,6 +6,9 @@ const auth = require("../middleware/auth");
 const User = require("../models/user");
 const Assessment = require("../models/assessment");
 const Question = require("../models/question");
+const Topic = require("../models/topic");
+const Material = require("../models/material");
+const generateMCQ = require("../functions/MCQ");
 
 //Create a new assessment
 router.post("/assessments", auth, jsonParser, async (req, res) => {
@@ -21,8 +24,70 @@ router.post("/assessments", auth, jsonParser, async (req, res) => {
         res.status(201).send(assessment);
     } catch (error) {
         //If error, send error
-        res.status(500).send(error.message);
+        res.status(500).send(error.message); 
     }
+});
+
+//Generate assessment from topic
+//Indexes all materials associated with the topic,
+//Then calls generateMCQ using the materials text fields
+router.post("/assessments/generateFromTopic/:topicId", auth, jsonParser, async (req, res) => {
+    try {
+        console.log(req.params);
+        //Find the topic by id
+        const topic = await Topic.findById(req.params.topicId);
+        //If the topic is not found, send error
+        if (!topic) {
+            return res.status(404).send( "Topic with id " + req.params.topicId + " not found");
+        }
+        //If the user is the owner of the topic generate the assessment
+        if (topic.createdBy.toString() === req.user._id.toString()) {
+            //Find all materials in the topic
+            await topic.populate("materials");
+            //Create an array of materials
+            const materials = topic.materials;
+            //If there are no materials, send error
+            if (materials.length === 0) {
+                return res.status(404).send("No materials found in topic");
+            }
+            //Create a text variable that will hold the text from each material in one string
+            let text = "";
+            //Add the text from each material to the array of text
+            for (let i = 0; i < materials.length; i++) {
+                text += materials[i].text;
+            }
+            //Generate the assessment
+            const response = await generateMCQ(text, req.body.numQuestions);
+            //Create an array of Questions from the response
+            let questions = [];
+            for (let i = 0; i < response.questions.length; i++) {
+                //Create a new question
+                const question = new Question({
+                    question: response.questions[i].question,
+                    options: response.questions[i].options,
+                    answer: response.questions[i].answer,
+                    createdBy: req.user._id,
+                });
+                //Save the question
+                await question.save();
+                //Add the question to the array of questions
+                questions.push(question);
+            }
+            //Create new assessment
+            const assessment = new Assessment({
+                name: req.body.name,
+                createdBy: req.user._id,
+                questions: questions,
+            });
+            //Save the assessment
+            await assessment.save();
+            //Return the assessment
+            res.status(201).send(assessment);
+        }
+    } catch (error) {
+        //If error, send error
+        res.status(500).send(error.message);
+    }    
 });
 
 //Add questions to an assessment
@@ -109,6 +174,8 @@ router.get("/assessments/:assessmentId", auth, async (req, res) => {
         }
         //If the user is the owner of the assessment or the assessment is public or the user is shared with the assessment, return the assessment
         if (assessment.createdBy.toString() === req.user._id.toString() || assessment.isPublic || assessment.sharedWith.includes(req.user._id)) {
+            //populate questions
+            await assessment.populate("questions");
             //Return the assessment
             res.send(assessment);
         } else {

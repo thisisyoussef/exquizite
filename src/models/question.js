@@ -78,6 +78,11 @@ const questionSchema = new mongoose.Schema({
         required: false,
         ref: "Material",
     },
+    assessment: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false,
+        ref: "Assessment",
+    },
 });
 
 const Question = mongoose.model("Question", questionSchema);

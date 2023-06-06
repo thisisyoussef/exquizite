@@ -6,7 +6,7 @@ const auth = require("../middleware/auth");
 const User = require("../models/user");
 const Question = require("../models/question");
 const generateMCQ = require("../functions/MCQ");
-const topic = require("../models/topic");
+const Topic = require("../models/topic");
 
 
 //Create new questions, if a topic id is provided populate the topic field
@@ -40,7 +40,7 @@ router.post("/questions", auth, jsonParser, async (req, res) => {
 router.get("/questions/:id", auth, async (req, res) => {
     try {
         //Find the topic by id
-        const topic = await topic.findById(req.params.id);
+        const topic = await Topic.findById(req.params.id);
         //If the topic is not found, send error
         if (!topic) {
             return res.status(404).send();

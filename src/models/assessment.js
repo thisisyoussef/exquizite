@@ -81,7 +81,15 @@ const assessmentSchema = new mongoose.Schema({
         required: false,
         default: 1,
     },
+    topic : {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false,
+        ref: "Topic",
+    },
 });
+
+//populate materials
+
 
 const Assessment = mongoose.model("Assessment", assessmentSchema);
 
