@@ -12,14 +12,40 @@ const workQueue = new Queue('work', {
         port: 14740, 
 },});
 
-
-workQueue.process(async (job) => {
-  const { text, numQuestions, userId, assessmentName } = job.data;
-  await processJob(text, numQuestions, userId, assessmentName);
+const redisClient = redis.createClient({
+  password: '1hmYL7z8FVMxvgRRFKruTqCgWSUy7v3D',
+  socket:{
+  host: 'redis-14740.c278.us-east-1-4.ec2.cloud.redislabs.com',
+  port: 14740,
+  }
 });
 
+workQueue.process(async (job) => {
+  //check if redis is connected
+  // if (!redisClient.connected) {
+  //   console.log('Redis client not connected');
+  // //Connect to redis
+  // //redisClient.connect();
+  // //console.log('Redis client connected');
+  //   return;
+  // }
+  const { text, numQuestions, userId, assessmentName } = job.data;
+  await processJob(text, numQuestions, userId, assessmentName);
+  // Publish a message to the Redis channel when the job is completed
+  //Check if client is open, if not open it
+  if (!redisClient.isOpen) {
+    console.log('Redis client not open');
+    //Connect to redis
+    redisClient.connect();
+    console.log('Redis client connected');
+    return;
+  }
+  redisClient.publish('job_completed', JSON.stringify({ jobId: job.id }));
+});
+
+
 workQueue.on('completed', (job, result) => {
-    console.log(`Job ${job} completed with result ${result}`);
+    console.log(`Job ${job.id} completed with result ${result}`);
     }
 );
 
