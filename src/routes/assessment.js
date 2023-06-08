@@ -7,8 +7,7 @@ const User = require("../models/user");
 const Assessment = require("../models/assessment");
 const Question = require("../models/question");
 const Topic = require("../models/topic");
-const Material = require("../models/material");
-const generateMCQ = require("../functions/MCQ");
+const workQueue = require('../worker');
 
 //Create a new assessment
 router.post("/assessments", auth, jsonParser, async (req, res) => {
@@ -56,33 +55,12 @@ router.post("/assessments/generateFromTopic/:topicId", auth, jsonParser, async (
             for (let i = 0; i < materials.length; i++) {
                 text += materials[i].text;
             }
-            //Generate the assessment
-            const response = await generateMCQ(text, req.body.numQuestions);
-            //Create an array of Questions from the response
-            let questions = [];
-            for (let i = 0; i < response.questions.length; i++) {
-                //Create a new question
-                const question = new Question({
-                    question: response.questions[i].question,
-                    options: response.questions[i].options,
-                    answer: response.questions[i].answer,
-                    createdBy: req.user._id,
-                });
-                //Save the question
-                await question.save();
-                //Add the question to the array of questions
-                questions.push(question);
-            }
-            //Create new assessment
-            const assessment = new Assessment({
-                name: req.body.name,
-                createdBy: req.user._id,
-                questions: questions,
-            });
-            //Save the assessment
-            await assessment.save();
-            //Return the assessment
-            res.status(201).send(assessment);
+            let numQuestions = req.body.numQuestions;
+
+            //redisClient.connect();
+            const job = await workQueue.add({ text, numQuestions, userId: req.user._id, assessmentName: req.body.name });
+
+            res.json({ jobId: job.id });
         }
     } catch (error) {
         //If error, send error
