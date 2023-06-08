@@ -17,6 +17,7 @@
         "@sendgrid/mail": "^7.7.0",
         "bcrypt": "^5.1.0",
         "body-parser": "^1.20.2",
+        "bull": "^4.10.4",
         "connect-flash": "^0.1.1",
         "cors": "^2.8.5",
         "dotenv": "^16.0.3",
@@ -35,6 +36,7 @@
         "pdf-extraction": "^1.0.2",
         "pdf.js-extract": "^0.2.1",
         "pdfjs-dist": "^3.7.107",
+        "redis": "^4.6.7",
         "sharp": "^0.32.1",
         "validator": "^13.9.0"
     },
