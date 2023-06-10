@@ -7,8 +7,13 @@ const assessmentRouter = require('./routes/assessment');
 const attemptRouter = require("./routes/attempt");
 const materialRouter = require("./routes/material");
 
-const app = express();
+
 const port = process.env.PORT || 3005;
+
+
+const app = express();
+
+
 
 //redisClient.connect();
 app.use(userRouter);
@@ -22,11 +27,6 @@ app.use(materialRouter);
 app.listen(port, () => {
     console.log("Server is up on port " + port);
 });
-const main = async() => {};
 
 //run mongoose
 require("./db/mongoose");
-
-
-
-main();

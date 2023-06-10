@@ -4,7 +4,11 @@ const generateMCQ = require('./functions/MCQ');
 const Assessment = require('../src/models/assessment');
 const Question = require('../src/models/question');
 //get processJob from processAssessment.js
+const express = require('express');
 const processJob = require('./functions/processAssessment');
+const WebSocket = require('ws');
+const wss = new WebSocket.Server({ port: 8080 });
+
 
 const workQueue = new Queue('work', {
     redis:    {password: '1hmYL7z8FVMxvgRRFKruTqCgWSUy7v3D', // Replace with your Redis password if applicable
@@ -21,6 +25,9 @@ const redisClient = redis.createClient({
 });
 
 workQueue.process(async (job) => {
+//on new message
+
+  // io.emit('jobStarted', { jobId: job.id });
   //check if redis is connected
   // if (!redisClient.connected) {
   //   console.log('Redis client not connected');
@@ -45,7 +52,13 @@ workQueue.process(async (job) => {
 
 
 workQueue.on('completed', (job, result) => {
-    console.log(`Job ${job.id} completed with result ${result}`);
+    const message = `Job ${job.id} completed with result ${result}`;
+    console.log(message);
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(message);
+      }
+    });
     }
 );
 
