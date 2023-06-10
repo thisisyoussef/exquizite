@@ -7,7 +7,7 @@ const Question = require('../src/models/question');
 const express = require('express');
 const processJob = require('./functions/processAssessment');
 const WebSocket = require('ws');
-const wss = new WebSocket.Server({ port: 8080 });
+const wss = new WebSocket.Server({ port: 8090 });
 const socketIO = require('socket.io');
 const http = require('http');
 
