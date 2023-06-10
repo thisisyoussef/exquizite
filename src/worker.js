@@ -30,8 +30,8 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(3008, () => {
-  console.log('Socket.IO server listening on port 1000');
+server.listen(() => {
+  console.log('Socket.IO server listening');
 });
 
 
