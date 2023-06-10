@@ -20,7 +20,7 @@ io.on('connection', (socket) => {
   console.log('A client connected');
 
   socket.on('message', (message) => {
-    console.log('Received message:', message);
+    console.log('Received message boo:', message);
     // Handle received message from client
   });
 
