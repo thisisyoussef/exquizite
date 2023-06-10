@@ -13,7 +13,6 @@ const http = require('http');
 
 const server = http.createServer();
 const io = socketIO(server);
-
 // Rest of your code...
 
 io.on('connection', (socket) => {
@@ -30,8 +29,8 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(() => {
-  console.log('Socket.IO server listening');
+server.listen(3006, () => {
+  console.log('Socket.IO server listening on port 3006');
 });
 
 
