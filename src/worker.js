@@ -8,6 +8,31 @@ const express = require('express');
 const processJob = require('./functions/processAssessment');
 const WebSocket = require('ws');
 const wss = new WebSocket.Server({ port: 8080 });
+const socketIO = require('socket.io');
+const http = require('http');
+
+const server = http.createServer();
+const io = socketIO(server);
+
+// Rest of your code...
+
+io.on('connection', (socket) => {
+  console.log('A client connected');
+
+  socket.on('message', (message) => {
+    console.log('Received message:', message);
+    // Handle received message from client
+  });
+
+  socket.on('disconnect', () => {
+    console.log('A client disconnected');
+    // Handle client disconnection
+  });
+});
+
+server.listen(1000, () => {
+  console.log('Socket.IO server listening on port 1000');
+});
 
 
 // Store WebSocket clients
