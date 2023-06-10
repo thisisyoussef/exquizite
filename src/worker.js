@@ -30,8 +30,8 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(() => {
-  console.log('Socket.IO server listening');
+server.listen(8080, () => {
+  console.log('Socket.IO server listening on port 8080');
 });
 
 
