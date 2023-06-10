@@ -7,7 +7,7 @@ const Question = require('../src/models/question');
 const express = require('express');
 const processJob = require('./functions/processAssessment');
 const WebSocket = require('ws');
-const wss = new WebSocket.Server({ port: 8090 });
+const wss = new WebSocket.Server({ port: 8080 });
 const socketIO = require('socket.io');
 const http = require('http');
 
@@ -30,8 +30,8 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(8080, () => {
-  console.log('Socket.IO server listening on port 8080');
+server.listen(() => {
+  console.log('Socket.IO server listening');
 });
 
 
