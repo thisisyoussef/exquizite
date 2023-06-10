@@ -10,6 +10,21 @@ const WebSocket = require('ws');
 const wss = new WebSocket.Server({ port: 8080 });
 
 
+// Store WebSocket clients
+const clients = new Set();
+
+// WebSocket connection event
+wss.on('connection', (client) => {
+  // Add client to the Set of clients
+  clients.add(client);
+
+  // WebSocket close event
+  client.on('close', () => {
+    // Remove client from the Set of clients
+    clients.delete(client);
+  });
+});
+
 const workQueue = new Queue('work', {
     redis:    {password: '1hmYL7z8FVMxvgRRFKruTqCgWSUy7v3D', // Replace with your Redis password if applicable
         host: 'redis-14740.c278.us-east-1-4.ec2.cloud.redislabs.com',
@@ -51,16 +66,18 @@ workQueue.process(async (job) => {
 });
 
 
+// Your existing job completion event handler
 workQueue.on('completed', (job, result) => {
-    const message = `Job ${job.id} completed with result ${result}`;
-    console.log(message);
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(message);
-      }
-    });
+  const message = `Job ${job.id} completed with result ${result}`;
+  console.log(message);
+
+  // Send the completion message to all connected WebSocket clients
+  clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(message);
     }
-);
+  });
+});
 
 workQueue.on('failed', (job, err) => {
     console.log(`Job failed with ${err.message}`);
