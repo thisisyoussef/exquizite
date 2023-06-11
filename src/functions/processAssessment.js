@@ -24,6 +24,7 @@ const processAssessment = async (text, numQuestions, userId, assessmentName) => 
       });
       await assessment.save();
       console.log('Assessment created:', assessment);
+      return assessment;
     } catch (error) {
       console.error('Error generating assessment:', error);
     }
