@@ -6,6 +6,7 @@ const questionRouter = require("./routes/question");
 const assessmentRouter = require('./routes/assessment');
 const attemptRouter = require("./routes/attempt");
 const materialRouter = require("./routes/material");
+const jobRouter = require("./routes/job");
 
 
 const port = process.env.PORT || 3005;
@@ -22,6 +23,7 @@ app.use(questionRouter);
 app.use(assessmentRouter);
 app.use(attemptRouter);
 app.use(materialRouter);
+app.use(jobRouter);
 
 
 app.listen(port, () => {
