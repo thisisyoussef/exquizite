@@ -18,8 +18,9 @@ const setupAttempt = async (assessmentId, userId) => {
     //Add the questions from the assessment to the placeholder questions array, loop through each question and add a new object to the questions array, with question set to the question id and correctAnswer set to the answer
         for (let i = 0; i < assessment.questions.length; i++) {
             questions.push({
-                question: assessment.questions[i]._id,
+                questionId: assessment.questions[i]._id,
                 correctAnswer: assessment.questions[i].answer,
+                question: assessment.questions[i].question,
             });
         }
     //Create a new attempt
@@ -130,7 +131,7 @@ router.patch("/attempt/:id", auth, jsonParser, async (req, res) => {
         for (let i = 0; i < req.body.length; i++) {
             //Find the question in the attempt, the question is in the array of "questions" within the attempt with the question field
             const question = attempt.questions.find((question) => {
-                return question.question == req.body[i][0];
+                return question.questionId == req.body[i][0];
             });
             
             //If the question is not found, send error
@@ -159,6 +160,7 @@ router.patch("/attempt/:id", auth, jsonParser, async (req, res) => {
 //     ["5f9b3b3b1c9d440000a3b0b1", "A"],
 //     ["5f9b3b3b1c9d440000a3b0b2", "B"],
 //     ["5f9b3b3b1c9d440000a3b0b3", "C"],
+// }
 
 
 //Submit an attempt by id
@@ -181,7 +183,7 @@ router.patch("/attempt/:id/submit", auth, jsonParser, async (req, res) => {
             console.log("updating question");
             //Find the question
             const question = attempt.questions.find((question) => {
-                return question.question == req.body[i][0];
+                return question.questionId == req.body[i][0];
             });            //If the question is not found, send error
             if (!question) {
                 return res.status(404).send();

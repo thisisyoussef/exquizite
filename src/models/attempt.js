@@ -14,10 +14,15 @@ const attemptSchema = new mongoose.Schema({
     },
     questions: [
         {
-            question: {
+            questionId: {
                 type: mongoose.Schema.Types.ObjectId,
                 required: true,
                 ref: "Question",
+            },
+            question: {
+                type: String,
+                required: true,
+                trim: true,
             },
             answer: {
                 type: String,
@@ -94,7 +99,7 @@ attemptSchema.pre("save", async function (next) {
         //add the questions from the assessment to the attempt, loop through each question and add a new object to the questions array, with question set to the question id and correctAnswer set to the answer
         assessment.questions.forEach((question) => {
             attempt.questions.push({
-                question: question._id,
+                questionId: question._id,
                 correctAnswer: question.answer,
             });
         }
