@@ -16,6 +16,9 @@ router.post("/assessments", auth, jsonParser, async (req, res) => {
         const assessment = new Assessment({
             name: req.body.name,
             createdBy: req.user._id,
+            subject: req.body.subject,
+            difficulty: req.body.difficulty,
+            tags: req.body.tags,
         });
         //Save the assessment
         await assessment.save();
@@ -176,7 +179,7 @@ router.patch("/assessments/:assessmentId", auth, jsonParser, async (req, res) =>
             return res.status(404).send();
         }
         //Set allowed updates
-        const allowedUpdates = ["name", "description", "category", "difficulty", "tags", "isPublic", "sharedWith", "language"];
+        const allowedUpdates = ["name", "description", "subject", "difficulty", "tags", "isPublic", "sharedWith", "language"];
         //Get the updates
         const updates = Object.keys(req.body);
         //Check if the updates are allowed
@@ -190,7 +193,7 @@ router.patch("/assessments/:assessmentId", auth, jsonParser, async (req, res) =>
             //Update the assessment
             assessment.name = req.body.name;
             assessment.description = req.body.description;
-            assessment.category = req.body.category;
+            assessment.subject = req.body.subject;
             assessment.difficulty = req.body.difficulty;
             assessment.tags = req.body.tags;
             assessment.isPublic = req.body.isPublic;

@@ -162,6 +162,103 @@ router.patch("/attempt/:id", auth, jsonParser, async (req, res) => {
 //     ["5f9b3b3b1c9d440000a3b0b3", "C"],
 // }
 
+/* Example for these questions:
+ {
+            "questionId": "648afe7b26323a80c50b12ab",
+            "question": "What is the purpose of the Redis client for Dart?",
+            "answer": "",
+            "correctAnswer": "To quickly and easily serialize and deserialize the Redis protocol",
+            "correct": false,
+            "_id": "6498c115c4a8746db1917e35"
+        },
+        {
+            "questionId": "648afe7b26323a80c50b12ad",
+            "question": "Which data types can be sent with the Redis protocol?",
+            "answer": "",
+            "correctAnswer": "String, Integer, Array, Error, Bulk",
+            "correct": false,
+            "_id": "6498c115c4a8746db1917e36"
+        },
+        {
+            "questionId": "648afe7b26323a80c50b12af",
+            "question": "What does the 'pipe_start' and 'pipe_end' functions do?",
+            "answer": "",
+            "correctAnswer": "Enables and disables the Nagle's algorithm on the socket",
+            "correct": false,
+            "_id": "6498c115c4a8746db1917e37"
+        },
+        {
+            "questionId": "648afe7b26323a80c50b12b1",
+            "question": "What is the purpose of class Transaction?",
+            "answer": "",
+            "correctAnswer": "To check the result of each command executed during a transaction",
+            "correct": false,
+            "_id": "6498c115c4a8746db1917e38"
+        },
+        {
+            "questionId": "648afe7b26323a80c50b12b3",
+            "question": "What is the CAS pattern?",
+            "answer": "",
+            "correctAnswer": "A way of executing commands without waiting for the previous command to complete",
+            "correct": false,
+            "_id": "6498c115c4a8746db1917e39"
+        },
+        {
+            "questionId": "648afe7b26323a80c50b12b5",
+            "question": "What is the purpose of TLS?",
+            "answer": "",
+            "correctAnswer": "To securely send and receive data over a network",
+            "correct": false,
+            "_id": "6498c115c4a8746db1917e3a"
+        },
+        {
+            "questionId": "648afe7b26323a80c50b12b7",
+            "question": "What is the purpose of UTF8 encoding?",
+            "answer": "",
+            "correctAnswer": "To convert strings from Dart to Redis",
+            "correct": false,
+            "_id": "6498c115c4a8746db1917e3b"
+        },
+        {
+            "questionId": "648afe7b26323a80c50b12b9",
+            "question": "What is the purpose of the EVAL command?",
+            "answer": "",
+            "correctAnswer": "To execute arbitrary Redis commands",
+            "correct": false,
+            "_id": "6498c115c4a8746db1917e3c"
+        },
+        {
+            "questionId": "648afe7b26323a80c50b12bb",
+            "question": "What is the maximum number of operations that can be executed per second?",
+            "answer": "",
+            "correctAnswer": "180K",
+            "correct": false,
+            "_id": "6498c115c4a8746db1917e3d"
+        },
+        {
+            "questionId": "648afe7b26323a80c50b12bd",
+            "question": "What is the purpose of the MULTI command?",
+            "answer": "",
+            "correctAnswer": "To start a transaction",
+            "correct": false,
+            "_id": "6498c115c4a8746db1917e3e"
+        },
+
+        The example input to update this is:
+        [
+            ["648afe7b26323a80c50b12ab", "To quickly and easily serialize and deserialize the Redis protocol"],
+            ["648afe7b26323a80c50b12ad", "String, Integer, Array, Error, Bulk"],
+            ["648afe7b26323a80c50b12af", "Enables and disables the Nagle's algorithm on the socket"],
+            ["648afe7b26323a80c50b12b1", "To check the result of each command executed during a transaction"],
+            ["648afe7b26323a80c50b12b3", "A way of executing commands without waiting for the previous command to complete"],
+            ["648afe7b26323a80c50b12b5", "To securely send and receive data over a network"],
+            ["648afe7b26323a80c50b12b7", "To convert strings from Dart to Redis"],
+            ["648afe7b26323a80c50b12b9", "To execute arbitrary Redis commands"],
+            ["648afe7b26323a80c50b12bb", "180K"],
+            ["648afe7b26323a80c50b12bd", "To start a transaction"]
+        ]
+*/
+
 
 //Submit an attempt by id
 router.patch("/attempt/:id/submit", auth, jsonParser, async (req, res) => {

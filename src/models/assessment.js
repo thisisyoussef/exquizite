@@ -26,10 +26,11 @@ const assessmentSchema = new mongoose.Schema({
         required: true,
         default: Date.now,
     },
-    category : {
+    subject : {
         type: String,
         required: false,
         trim: true,
+        //enum: ["math", "science", "english", "history", "other"],
     },
     difficulty : {
         type: String,
