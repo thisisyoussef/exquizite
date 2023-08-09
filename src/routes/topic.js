@@ -23,7 +23,7 @@ router.post("/topic", auth, jsonParser, async (req, res) =>
         res.status(400).json({ error: error.message });
     }
 });
-//Example of a request body:
+//merchant of a request body:
 /*
 {
     "name": "Test Collection",

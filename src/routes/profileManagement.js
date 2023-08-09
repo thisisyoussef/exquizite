@@ -26,7 +26,7 @@ router.post("/register" , jsonParser, async(req, res) => {
     }
 });
 
-/* Example of a request body:
+/* merchant of a request body:
 {
     "firstName": "John",
     "lastName": "Doe",
@@ -56,7 +56,7 @@ router.post("/login", jsonParser, async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 });
-/* Example of a request body:
+/* merchant of a request body:
 {
     "email": "x@x.com"
     "password": "password"
@@ -130,7 +130,7 @@ router.patch("/profile",jsonParser, auth, async (req, res) => {
     }
 });
 
-// Example of a request body:
+// merchant of a request body:
 // {
 //     "firstName": "John",
 //     "lastName": "Doe",

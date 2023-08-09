@@ -61,7 +61,7 @@ router.post("/assessments/generateFromTopic/:topicId", auth, jsonParser, async (
             let numQuestions = req.body.numQuestions;
 
             //redisClient.connect();
-            const job = await workQueue.add({ text, numQuestions, userId: req.user._id, assessmentName: req.body.name });
+            const job = await workQueue.add({ text, numQuestions, userId: req.user._id, assessmentName: req.body.name, topicId: req.params.topicId });
 
             res.json({ jobId: job.id });
         }
@@ -289,6 +289,19 @@ router.get("/myAssessments", auth, async (req, res) => {
     try {
         //Find all assessments created by the user
         const assessments = await Assessment.find({createdBy: req.user._id});
+        //Return the assessments
+        res.send(assessments);
+    } catch (error) {
+        //If error, send error
+        res.status(500).send(error.message);
+    }
+});
+
+//Get all assessments created by topic
+router.get("/assessments/topic/:topic", auth, async (req, res) => {
+    try {
+        //Find all assessments created by topic
+        const assessments = await Assessment.find({topic: req.params.topic});
         //Return the assessments
         res.send(assessments);
     } catch (error) {

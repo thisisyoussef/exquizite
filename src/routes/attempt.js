@@ -155,14 +155,14 @@ router.patch("/attempt/:id", auth, jsonParser, async (req, res) => {
     }
 });
 
-//Example body of patch request in json format
+//merchant body of patch request in json format
 // [
 //     ["5f9b3b3b1c9d440000a3b0b1", "A"],
 //     ["5f9b3b3b1c9d440000a3b0b2", "B"],
 //     ["5f9b3b3b1c9d440000a3b0b3", "C"],
 // }
 
-/* Example for these questions:
+/* merchant for these questions:
  {
             "questionId": "648afe7b26323a80c50b12ab",
             "question": "What is the purpose of the Redis client for Dart?",
@@ -244,7 +244,7 @@ router.patch("/attempt/:id", auth, jsonParser, async (req, res) => {
             "_id": "6498c115c4a8746db1917e3e"
         },
 
-        The example input to update this is:
+        The merchant input to update this is:
         [
             ["648afe7b26323a80c50b12ab", "To quickly and easily serialize and deserialize the Redis protocol"],
             ["648afe7b26323a80c50b12ad", "String, Integer, Array, Error, Bulk"],

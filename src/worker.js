@@ -22,8 +22,8 @@ const redisClient = redis.createClient({
 
 workQueue.process(async (job) => {
   //create a new job
-  const { text, numQuestions, userId, assessmentName } = job.data;
-  result = await processAssessment(text, numQuestions, userId, assessmentName);
+  const { text, numQuestions, userId, assessmentName, topicId } = job.data;
+  result = await processAssessment(text, numQuestions, userId, assessmentName,topicId);
   // Publish a message to the Redis channel when the job is completed
   //Check if client is open, if not open it
   if (!redisClient.isOpen) {

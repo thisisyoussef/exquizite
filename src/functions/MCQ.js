@@ -16,7 +16,7 @@ function generateMCQPrompt(prompt, numQuestions) {
   return `
   Prompt: ${prompt}
   Generate ${numQuestions} multiple choice questions about the prompt in the following format as a JSON Object:
-  Example Response:
+  merchant Response:
   {
     "questions": [
       {

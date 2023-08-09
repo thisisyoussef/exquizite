@@ -21,6 +21,7 @@ const processAssessment = async (text, numQuestions, userId, assessmentName) => 
         name: assessmentName,
         createdBy: userId,
         questions: questions,
+        topic: topicId,
       });
       await assessment.save();
       console.log('Assessment created:', assessment);
