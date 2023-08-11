@@ -78,7 +78,7 @@ This project is licensed under the MIT License. For more information, please rev
 
 ## Contact Information
 
-For any additional information, questions, or support, please feel free to reach out to the project maintainer at [you.can.find@me.on.email](mailto:you.can.find@me.on.email).
+For any additional information, questions, or support, please feel free to reach out to the project maintainer at [you.can.find@me.on.email](mailto:youssefiahmedis@gmail.com).
 
 ## Additional Notes
 
