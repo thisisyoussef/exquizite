@@ -3,7 +3,7 @@ const Assessment = require('../../src/models/assessment');
 const Question = require('../../src/models/question');
 
 
-const processAssessment = async (text, numQuestions, userId, assessmentName, topicId) => {
+const processAssessment = async (text, numQuestions, userId, assessmentName, topicId, difficulty) => {
     try {
       const response = await generateMCQ(text, numQuestions);
       const questions = [];
