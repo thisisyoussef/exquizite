@@ -122,28 +122,16 @@ router.post("/topics/:id/materials/files", auth, upload.any("files"), jsonParser
             owner: req.user._id,
             createdBy: req.user._id,
         });
-        //loop through the files and call getTextFromPDF if the file is a pdf
-        //then append the text to the material
-        for (let i = 0; i < req.files.length; i++) {
-            console.log("req.files[i].mimetype: ", req.files[i].mimetype);
-            if (req.files[i].mimetype === "application/pdf") {
-                // Extract text from PDF
-                var text = await getTextFromPDF.GetTextFromPDF(req.files[i].buffer);
-                //set text to the text field of its object
-                if (material.text === undefined) {
-                    material.text = "";
-                }
-                //Add a new line to the text before appending the text from the pdf
-                material.text += "\n";
-                material.text += text;
-            }
+        //loop through the files and push them to the files array of the material
+        for(let i = 0; i < req.files.length; i++) {
             material.files.push(req.files[i].buffer);
         }
-        //console.log("material.files: ", material.files[0]);
+        //then call the scanMaterialFiles function to scan the files and update the material text
+        material = await scanMaterialFiles.scanMaterialFiles(material);
         await material.save();
-        res.send(material);
-    } catch (e) {
-        res.status(400).send(e);
+        res.status(201).send(material);
+    } catch (error) {
+        res.status(400).send(error);
     }
 });
 
