@@ -2,54 +2,56 @@ const extract = require('pdf-extraction');
 const mammoth = require('mammoth');
 const fs = require('fs');
 const xlsx = require('xlsx');
+const officeParser = require('officeparser');
 
 
 async function getTextFromFile(file) {
-  console.log("file: ", file);
-  const extension = file.name.split('.').pop().toLowerCase();
-  let text;
+  //input is an object with fileName, buffer, and mimeType
+  let extension = file.originalname.split('.').pop();
+  let data = file.buffer;
+  console.log("extension: ", extension);
   switch (extension) {
     case 'pdf':
-      text = await getTextFromPDF(file);
+      text = await getTextFromPDF(data);
       break;
     case 'doc':
     case 'docx':
     case 'odt':
-      text = await getTextFromDoc(file);
+      text = await getTextFromDoc(data);
       break;
     case 'txt':
-      text = await getTextFromTxt(file);
+      text = await getTextFromTxt(data);
       break;
     case 'mp4':
     case 'avi':
     case 'mov':
     case 'wmv':
-      text = await getTextFromVideo(file);
+      text = await getTextFromVideo(data);
       break;
     case 'mp3':
     case 'wav':
     case 'aac':
     case 'flac':
-      text = await getTextFromAudio(file);
+      text = await getTextFromAudio(data);
       break;
     case 'ppt':
     case 'pptx':
     case 'pps':
     case 'ppsx':
-      text = await getTextFromPresentation(file);
+      text = await getTextFromPresentation(data);
       break;
     case 'xls':
     case 'xlsx':
     case 'ods':
     case 'csv':
     case 'tsv':
-      text = await getTextFromSpreadsheet(file);
+      text = await getTextFromSpreadsheet(data);
       break;
     case 'jpg':
     case 'jpeg':
     case 'png':
     case 'gif':
-      text = await getTextFromImage(file);
+      text = await getTextFromImage(data);
       break;
     default:
       throw new Error('Unsupported file type.');
@@ -59,7 +61,7 @@ async function getTextFromFile(file) {
 
 async function getTextFromPDF(file) {
   var data;
-  data = await extract(file.path, (err, data) => {
+  data = await extract(file, (err, data) => {
     if (err) {
       console.error('Error extracting text from PDF:', err);
       throw new Error('Error extracting text from PDF.');

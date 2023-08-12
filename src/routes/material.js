@@ -92,7 +92,14 @@ router.post("/topics/:id/materials", auth, upload.any("files"), jsonParser, asyn
             return res.status(401).send( {error: "You are not the owner of this topic"} );
         }
         const material = new Material({
-            ...req.body,
+            name: req.body.name,
+            description: req.body.description,
+            files: //map through the files array and push these 3 seperate value: buffer, name and mimetype to the files array of the material
+                req.files.map((file) => {
+                    return {
+                        ...file
+                    };
+                }),
             topic: req.params.id,
             owner: req.user._id,
             createdBy: req.user._id,
@@ -109,6 +116,7 @@ router.post("/topics/:id/materials", auth, upload.any("files"), jsonParser, asyn
 router.post("/topics/:id/materials/files", auth, upload.any("files"), jsonParser, async (req, res) => {
     try {
         const topic = await Topic.findById(req.params.id);
+        console.log("topic: ", topic);
         if (!topic) {
             return res.status(404).send( {error: "Topic not found"} );
         }
@@ -116,18 +124,22 @@ router.post("/topics/:id/materials/files", auth, upload.any("files"), jsonParser
         if (req.user._id.toString() !== topic.createdBy.toString()) {
             return res.status(401).send( {error: "You are not the owner of this topic"} );
         }
+        console.log("req.files: ");
         const material = new Material({
-            ...req.body,
+            name: req.body.name,
+            description: req.body.description,
+            files: //map through the files array and push these 3 seperate value: buffer, name and mimetype to the files array of the material
+                req.files.map((file) => {
+                    return {
+                        ...file
+                    };
+                }),
             topic: req.params.id,
             owner: req.user._id,
             createdBy: req.user._id,
         });
-        //loop through the files and push them to the files array of the material
-        for(let i = 0; i < req.files.length; i++) {
-            material.files.push(req.files[i].buffer);
-        }
         //then call the scanMaterialFiles function to scan the files and update the material text
-        material = await scanMaterialFiles.scanMaterialFiles(material);
+        await scanMaterialFiles.scanMaterialFiles(material);
         await material.save();
         res.status(201).send(material);
     } catch (error) {

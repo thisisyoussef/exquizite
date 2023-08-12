@@ -10,7 +10,7 @@ async function scanMaterialFiles(material) {
     material.text = "";
     for (let i = 0; i < material.files.length; i++) {
             // Extract text from file
-            var text = await getTextFromFile.getTextFromFile(material.files[i].buffer);
+            var text = await getTextFromFile.getTextFromFile(material.files[i]);
             //set text to the text field of its object
             if (material.text === undefined) {
                 material.text = "";

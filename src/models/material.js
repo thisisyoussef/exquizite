@@ -22,10 +22,21 @@ const materialSchema = new mongoose.Schema({
     },
     files: [
         {
+            originalname: {
+                type: String,
+                required: true,
+                trim: true,
+            },
+            mimetype: {
+                type: String,
+                required: true,
+                trim: true,
+            },
+            buffer: {
             type: Buffer,
             required: true,
             ref: "File",
-        },
+        }},
     ],
     topic: {
         type: mongoose.Schema.Types.ObjectId,
