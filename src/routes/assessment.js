@@ -61,7 +61,7 @@ router.post("/assessments/generateFromTopic/:topicId", auth, jsonParser, async (
             let numQuestions = req.body.numQuestions;
 
             //redisClient.connect();
-            const job = await workQueue.add({ text, numQuestions, userId: req.user._id, assessmentName: req.body.name, topicId: req.params.topicId });
+            const job = await workQueue.add({ text, numQuestions, userId: req.user._id, assessmentName: req.body.name, topicId: req.params.topicId, difficulty: req.body.difficulty });
 
             res.json({ jobId: job.id });
         }
