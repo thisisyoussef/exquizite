@@ -13,7 +13,6 @@ const processAssessment = async (text, numQuestions, userId, assessmentName, top
           options: response.questions[i].options,
           answer: response.questions[i].answer,
           createdBy: userId,
-          difficulty: difficulty,
         });
         await question.save();
         questions.push(question);
@@ -23,6 +22,8 @@ const processAssessment = async (text, numQuestions, userId, assessmentName, top
         createdBy: userId,
         questions: questions,
         topic: topicId,
+        difficulty: difficulty,
+
       });
       await assessment.save();
       console.log('Assessment created:', assessment);
