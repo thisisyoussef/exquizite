@@ -102,6 +102,8 @@ router.post("/topics/:id/materials", auth, upload.any("files"), jsonParser, asyn
             topic: req.params.id,
             owner: req.user._id,
             createdBy: req.user._id,
+            text: req.body.text,
+
         });
         await material.save();
         res.status(201).send(material);
