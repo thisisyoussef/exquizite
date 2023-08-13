@@ -23,7 +23,6 @@ const processAssessment = async (text, numQuestions, userId, assessmentName, top
         questions: questions,
         topic: topicId,
         difficulty: difficulty,
-
       });
       await assessment.save();
       console.log('Assessment created:', assessment);

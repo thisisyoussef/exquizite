@@ -94,12 +94,11 @@ router.post("/topics/:id/materials", auth, upload.any("files"), jsonParser, asyn
         const material = new Material({
             name: req.body.name,
             description: req.body.description,
-            files: //map through the files array and push these 3 seperate value: buffer, name and mimetype to the files array of the material
-                req.files.map((file) => {
-                    return {
-                        ...file
-                    };
-                }),
+            files: (req.files || []).map((file) => {
+  return {
+    ...file
+  };
+}),
             topic: req.params.id,
             owner: req.user._id,
             createdBy: req.user._id,
