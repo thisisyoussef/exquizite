@@ -62,24 +62,4 @@ Exquizite offers a variety of features, which include:
 - Built-in performance and user statistics.
 - Integration with popular third-party applications for seamless data sharing.
 
-## Contributing Guidelines
 
-Contributions to Exquizite are always appreciated. Here are some ways you can contribute:
-
-1. Submit bug reports and feature requests through the [issue tracker](https://github.com/thisisyoussef/exquizite/issues).
-2. Improve the documentation, including this Readme file, to provide better guidance and clarity to users.
-3. Fork the repository and submit pull requests to contribute to the codebase.
-
-Before submitting a pull request, please ensure that your changes follow the existing coding standards and conventions, as well as any additional contribution guidelines specified in the project.
-
-## License Information
-
-This project is licensed under the MIT License. For more information, please review the [LICENSE](LICENSE) file.
-
-## Contact Information
-
-For any additional information, questions, or support, please feel free to reach out to the project maintainer at [you.can.find@me.on.email](mailto:youssefiahmedis@gmail.com).
-
-## Additional Notes
-
-Exquizite is built using powerful and relevant technologies such as React, Redux, and Node.js, which are known for their performance, scalability, and ease of use. The components-based architecture of React, along with the robust state management capabilities provided by Redux, make this application highly modular and maintainable. Node.js ensures a fast and efficient development environment and allows for seamless integration of server-side logic if required. These technologies and tools contribute significantly to the project's overall success and enhanced user experience.
